@@ -1,3 +1,6 @@
+> # Development of this repository has been moved over to Codeberg
+> This repository will be archived, so to contribute, head over here: https://codeberg.org/nexidict/Pehkui-Figura 
+
 # ↔️ Pehkui Figura
 
 A Figura library that allows models to send Pehkui and P4A scaling commands, as well as toggling scaling
