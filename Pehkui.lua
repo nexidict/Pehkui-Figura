@@ -75,33 +75,33 @@ function events.entity_init()
 	pehkui.p4aCheck = client:isModLoaded("pehkui4all")
     pehkui.opCheck = player:getPermissionLevel() == 4   
 
-    --IF YOU HATE THE STARTUP MESSAGE THIS IS THE THING TO DELETE! \/
+    -- COMMENT THIS CODE BLOCK OUT IF YOU DISLIKE THE STARTUP MESSAGE \/
 
     if pehkui.pehkuiCheck then
         if pehkui.opCheck then
-            print("OP Detected, Using /scale for Scaling")
+            print("OP detected!\nYou have full, unrestricted access to Pehkui scaling. Have fun!")
         elseif pehkui.p4aCheck then
-            print("Pehkui 4 All Detected, Using /lesserscale for Scaling")
+            print("P4A detected!\nYou have basic access to Pehkui scaling.")
         else
-            print("Insufficient Permissions for Scaling, Scaling Disabled")
+            print("Insufficient permissions for Pehkui scaling. Module has been disabled")
         end	
     else
-        print("Pehkui not Installed, scaling Disabled")
+        print("Pehkui isn't installed, scaling has been disabled!")
     end
 
-    --IF YOU HATE THE STARTUP MESSAGE THIS IS THE THING TO DELETE! /\
+    -- COMMENT THIS CODE BLOCK OUT IF YOU DISLIKE THE STARTUP MESSAGE /\
 
     loadConfig()
 end
 
 function events.tick()
-    if queueTimer > 15 then
+    if queueTimer > 20 then 
         queueTimer = 0
 
         if commandQueue:isEmpty() then return end
 
         local command = commandQueue:pop()
-        --log(command)
+
         host:sendChatCommand(command)
     else queueTimer = queueTimer + 1 end
 end
@@ -114,12 +114,32 @@ end
 function pehkui.setScale(scale, value, forceScaling)
     if pehkui.options[scale] == false and not forceScaling then return end
 
-    if pehkui.opCheck and pehkui.pehkuiCheck then
-        commandQueue:push('scale set '..scale..' '..value..' @s')
-    elseif pehkui.p4aCheck then
-        local prefixIndex = string.find(scale, ":")
-        scale = string.sub(scale, prefixIndex+1)
-        commandQueue:push('lesserscale set '..value..' '..scale)
+    if pehkui.pehkuiCheck then
+        -- we have pehkui
+        if pehkui.opCheck then
+            -- we have pehkui and op, send this immediately
+            host:sendChatCommand('scale set '..scale..' '..value..' @s')
+        elseif pehkui.p4aCheck then
+            -- we have p4a but not op
+            local str = string.format('p4ascale set "%s" %s', scale, value) -- the command
+            local IndexToReplace
+
+            -- checking to see if the item exists already
+            for index,param in pairs(commandQueue.data) do
+                if string.find(param, scale) then
+                    -- give us that index for later
+                    IndexToReplace = index
+                    break
+                end
+            end
+
+            if IndexToReplace then -- if there is something to replace
+                queueTimer = 0 -- reset the timer
+                commandQueue.data[IndexToReplace] = str -- replace the item in the queue
+            else -- if not
+                commandQueue:push(str) -- push it to queue
+            end
+        end
     end
 end
 

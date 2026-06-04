@@ -27,6 +27,7 @@ function Queue:pop()
     end
 
     local value = self.data[self.head]
+
     self.data[self.head] = nil
     self.head = self.head + 1
     return value
@@ -37,4 +38,3 @@ function Queue:isEmpty()
 end
 
 return Queue
-
