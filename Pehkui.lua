@@ -70,7 +70,8 @@ end
 
 -- EVENTS
 function events.entity_init()
-    pehkui.pehkuiCheck = client:isModLoaded("pehkui")
+    if not host:isHost() then return end
+	pehkui.pehkuiCheck = client:isModLoaded("pehkui")
 	pehkui.p4aCheck = client:isModLoaded("pehkui4all")
     pehkui.opCheck = player:getPermissionLevel() == 4   
 
